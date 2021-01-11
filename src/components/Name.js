@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 
-export default function Name() {
+export default React.memo(() => {
+  console.log('name rendered');
+
   const [name, setName] = useState('');
 
   return (
@@ -13,4 +15,4 @@ export default function Name() {
       />
     </label>
   );
-}
+});

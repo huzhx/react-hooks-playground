@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Name from './Name';
 import ColorPicker from './ColorPicker';
+import RefreshButton from './RefreshButton';
 import randomColor from 'randomcolor';
 import Canvas from './Canvas';
 
@@ -10,7 +11,7 @@ export default function Paint() {
 
   const headerRef = useRef({ offsetHeight: 0 });
 
-  const getColors = () => {
+  const getColors = useCallback(() => {
     const baseColor = randomColor().slice(1);
     fetch(`https://www.thecolorapi.com/scheme?hex=${baseColor}&mode=monochrome`)
       .then((res) => res.json())
@@ -18,7 +19,7 @@ export default function Paint() {
         setColors(res.colors.map((color) => color.hex.value));
         setActiveColor(res.colors[0].hex.value);
       });
-  };
+  }, []);
 
   useEffect(() => {
     getColors();
@@ -32,6 +33,7 @@ export default function Paint() {
         </div>
         <div style={{ marginTop: 10 }}>
           <ColorPicker colors={colors} activeColor={activeColor} setActiveColor={setActiveColor} />
+          <RefreshButton cb={getColors} />
         </div>
       </header>
       {activeColor && <Canvas color={activeColor} height={window.innerHeight - headerRef.current.offsetHeight} />}
